@@ -12,7 +12,7 @@ import store from "@/store/store";
 const routes = [
     {path: '/', name: 'note-list', component: NoteList},
     {path: '/create', name: 'note', component: CreateNote},
-    {path: '/edit/:id', name: 'EditNote', component: EditNote,},
+    {path: '/edit/:id', name: 'EditNote', component: EditNote, props: true},
 ];
 
 const router = createRouter({

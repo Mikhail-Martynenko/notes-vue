@@ -16,11 +16,11 @@ const store = createStore({
             ],
         };
     },
-    getters: {
-        allNotes(state) {
-            return state.notes;
-        }
-    },
+    // getters: {
+    //     allNotes(state) {
+    //         return state.notes;
+    //     }
+    // },
     mutations: {
 
         addNote(state, note) {
@@ -34,7 +34,7 @@ const store = createStore({
         },
         deleteNote(state, noteId) {
             state.notes = state.notes.filter((note) => note.id !== noteId);
-        },
+        }
     },
 });
 
