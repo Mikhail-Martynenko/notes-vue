@@ -16,13 +16,12 @@ const store = createStore({
             ],
         };
     },
-    // getters: {
-    //     allNotes(state) {
-    //         return state.notes;
-    //     }
-    // },
+    getters: {
+        allNotes(state) {
+            return state.notes;
+        }
+    },
     mutations: {
-
         addNote(state, note) {
             state.notes.push(note);
         },

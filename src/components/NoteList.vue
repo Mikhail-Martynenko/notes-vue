@@ -4,7 +4,7 @@
         <h1>Список заметок</h1>
         <ul>
             <li v-for="note in notes" :key="note.id">
-                <h2>{{ note.title }}</h2>
+                <router-link :to="'/edit/' + note.id">{{note.title}}</router-link>
                 <ul>
                     <li v-for="todo in note.todos" :key="todo.id">
                         <input type="checkbox" disabled />
@@ -12,10 +12,9 @@
                     </li>
                 </ul>
                 <br>
-                <!--                <router-link :to="'/edit/' + note.id">Изменить</router-link>-->
-                <div v-show="showCreateNote">
-                    <EditNote :noteProp="note" :show="showCreateNote" @cancel-edit="showEditNote" />
-                </div>
+<!--                <div>-->
+<!--                    <EditNote :noteProp="note" @cancel-edit="showEditNote" />-->
+<!--                </div>-->
                 <button @click="showEditNote">Изменить</button>
                 <button @click="deleteNote(note.id)">Удалить</button>
             </li>
@@ -27,36 +26,25 @@
 
 import CreateNote from "@/components/CreateNote.vue";
 import EditNote from "@/components/EditNote.vue";
+import {mapState} from "vuex";
+
 
 export default {
     components: {
         EditNote,
         CreateNote,
     },
-    data() {
-        return {
-            notes: [
-                {
-                    id: 1,
-                    title: 'Заметка 1',
-                    todos: [
-                        {id: 1, text: 'Задача 1', completed: false},
-                        {id: 2, text: 'Задача 2', completed: true},
-                        {id: 3, text: 'Задача 3', completed: false},
-                    ],
-                },
-            ],
-            showCreateNote: false
-        };
+    computed: {
+        ...mapState(['notes']),
     },
     methods: {
         addNote(note) {
-            this.notes.push(note);
+            this.$store.commit('addNote', note);
         },
         deleteNote(noteId) {
             if (confirm("Вы уверены, что хотите удалить заметку?")) {
                 console.log("Заметка удалена:", noteId);
-                this.notes = this.notes.filter((note) => note.id !== noteId);
+                this.$store.commit('deleteNote', noteId);
             }
         },
         showEditNote() {

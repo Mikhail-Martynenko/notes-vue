@@ -17,13 +17,19 @@
             <button type="button" @click="addTodo">Добавить задачу</button>
             <button type="submit">Сохранить изменения</button>
             <button type="button" @click="cancelEdit">Отменить редактирование</button>
+
+
+            <button type="button" @click="undoEdit" :disabled="undoStack.length === 0">Отменить изменение</button>
+            <button type="button" @click="redoEdit" :disabled="redoStack.length === 0">Повторить изменение</button>
         </form>
     </div>
 </template>
 
 <script>
+import {mapGetters, mapMutations, mapState} from "vuex";
+
 export default {
-    props: ['noteProp', 'show'],
+    // props: ['noteProp'],
     data() {
         return {
             note: {
@@ -32,35 +38,63 @@ export default {
                 todos: [],
             },
             originalNote: {},
+            undoStack: [], // Стек для отмены изменений
+            redoStack: [], // Стек для повтора изменений
         };
     },
     mounted() {
-        this.note = JSON.parse(JSON.stringify(this.noteProp));
-        this.originalNote = JSON.parse(JSON.stringify(this.noteProp));
+        // this.note = JSON.parse(JSON.stringify(this.noteProp));
+        const noteId = this.$route.params.id;
+        this.originalNote = JSON.parse(JSON.stringify(this.notes[noteId - 1]));
+        this.note = this.notes[noteId - 1]
+    },
+    computed: {
+        ...mapState(['notes']), // Доступ к состоянию хранилища
     },
     methods: {
+        ...mapMutations(['updateNote']),
         addTodo() {
             this.note.todos.push({id: this.generateUUID(), text: '', completed: false});
+
+            // this.pushToUndoStack();
         },
         removeTodo(index) {
             this.note.todos.splice(index, 1);
+            // this.pushToUndoStack();
         },
         saveNote() {
             console.log(this.note, 'this note');
-            // this.$emit('note-saved', this.note);
-            // this.$router.push('/');
-            // Object.assign(this.noteProp, this.note);
-            this.$emit('cancel-edit');
+            this.updateNote(this.note)
+            this.$router.push('/');
         },
         cancelEdit() {
-            // this.$router.push('/');
-            this.note = JSON.parse(JSON.stringify(this.originalNote));
-            this.$emit('cancel-edit');
-
+            this.updateNote(this.originalNote)
+            this.$router.push('/');
         },
         generateUUID() {
             return `uuid-${Date.now()}`;
         },
+
+        // undoEdit() {
+        //     console.log(this.note, 'prev')
+        //     const previousState = this.undoStack.pop();
+        //     if (previousState) {
+        //         this.redoStack.push(JSON.parse(JSON.stringify(this.note))); // Добавление текущего состояния в стек повтора
+        //         this.note = previousState;
+        //     }
+        //     console.log(this.note, 'next')
+        // },
+        // redoEdit() {
+        //     const nextState = this.redoStack.pop();
+        //     if (nextState) {
+        //         this.undoStack.push(JSON.parse(JSON.stringify(this.note))); // Добавление текущего состояния в стек отмены
+        //         this.note = nextState;
+        //     }
+        // },
+        // pushToUndoStack() {
+        //     this.undoStack.push(JSON.parse(JSON.stringify(this.note))); // Добавление текущего состояния в стек отмены
+        //     this.redoStack = []; // Очистка стека повтора при внесении нового изменения
+        // },
     },
 };
 </script>
