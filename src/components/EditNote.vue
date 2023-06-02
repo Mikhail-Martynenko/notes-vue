@@ -18,16 +18,17 @@
             <button type="submit">Сохранить изменения</button>
             <button type="button" @click="showCancelModal = true">Отменить редактирование</button>
 
+            <button type="button" @click="undoEdit" :disabled="undoStack.length === 0">Отменить изменение</button>
+            <button type="button" @click="redoEdit" :disabled="redoStack.length === 0">Повторить изменение</button>
+
+            <button type="button" @click="showDeleteModal=true">Удалить заметку</button>
+
             <ModalView v-if="showCancelModal">
                 <h3>Вы уверены, отменить редактирование</h3>
                 <button type="button" @click="cancelEdit()">Да</button>
                 <button type="button" @click="showCancelModal = false">Нет</button>
             </ModalView>
 
-            <button type="button" @click="undoEdit" :disabled="undoStack.length === 0">Отменить изменение</button>
-            <button type="button" @click="redoEdit" :disabled="redoStack.length === 0">Повторить изменение</button>
-
-            <button type="button" @click="showDeleteModal=true">Удалить заметку</button>
             <ModalView v-if="showDeleteModal">
                 <h3>Вы уверены, что хотите удалить заметку?</h3>
                 <button type="button" @click="handleDeleteNote(note.id)">Удалить</button>
@@ -38,8 +39,9 @@
 </template>
 
 <script>
-import {mapMutations, mapState} from "vuex";
+import {mapActions, mapMutations, mapState} from "vuex";
 import ModalView from "@/components/ModalView.vue";
+import {deepClone} from "@/utils/deepClone";
 
 export default {
     components: {
@@ -62,15 +64,18 @@ export default {
     mounted() {
         // this.note = JSON.parse(JSON.stringify(this.noteProp));
         const noteId = this.$route.params.id;
-        this.originalNote = JSON.parse(JSON.stringify(this.notes[noteId - 1]));
+        this.originalNote = deepClone(this.notes[noteId - 1]);
         this.note = this.notes[noteId - 1]
     },
     computed: {
-        ...mapState(['notes']),
+        ...mapState(['notes']),// TODO mapGetters
         // Доступ к состоянию хранилища
     },
     methods: {
-        ...mapMutations(['updateNote', 'deleteNote']),
+        ...mapActions(['updateNote', 'deleteNote']),// TODO mapActions
+
+        // TODO FIX ID
+
         addTodo() {
             this.note.todos.push({id: this.generateUUID(), text: '', completed: false});
 

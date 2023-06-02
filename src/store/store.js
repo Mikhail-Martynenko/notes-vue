@@ -21,7 +21,7 @@ const store = createStore({
             return state.notes;
         }
     },
-    mutations: {
+    actions: {
         addNote(state, note) {
             state.notes.push(note);
         },

@@ -19,12 +19,13 @@
 </template>
 
 <script>
+import {mapGetters} from "vuex";
+
 export default {
-    props: ['dataProp'],
     data() {
         return {
             note: {
-                id: this.generateUUID(),
+                id: this.allNotes.length ,
                 title: '',
                 todos: [],
             },
@@ -32,6 +33,7 @@ export default {
         };
     },
     methods: {
+        ...mapGetters(["allNotes"]),
         addTodo() {
             this.note.todos.push({id: this.generateUUID(), text: '', completed: false});
         },
@@ -42,7 +44,7 @@ export default {
             console.log(this.note);
             this.$emit('note-saved', this.note);
             this.note = {
-                id: this.generateUUID(),
+                id: this.allNotes.length + 1,
                 title: '',
                 todos: [],
             };
