@@ -4,7 +4,7 @@
         <h1>Список заметок</h1>
         <ul>
             <li v-for="note in notes" :key="note.id">
-                <router-link :to="'/edit/' + note.id">{{note.title}}</router-link>
+                <router-link :to="'/edit/' + note.id">{{ note.title }}</router-link>
                 <ul>
                     <li v-for="todo in note.todos" :key="todo.id">
                         <input type="checkbox" disabled />
@@ -12,11 +12,12 @@
                     </li>
                 </ul>
                 <br>
-<!--                <div>-->
-<!--                    <EditNote :noteProp="note" @cancel-edit="showEditNote" />-->
-<!--                </div>-->
-                <button @click="showEditNote">Изменить</button>
-                <button @click="deleteNote(note.id)">Удалить</button>
+                <button @click="showModal=true">Удалить</button>
+                <ModalView v-if="showModal">
+                    <h3>Вы уверены, что хотите удалить заметку?</h3>
+                    <button type="button" @click="deleteNote(note.id)">Удалить</button>
+                    <button type="button" @click="showModal = false">Отмена</button>
+                </ModalView>
             </li>
         </ul>
     </div>
@@ -27,12 +28,19 @@
 import CreateNote from "@/components/CreateNote.vue";
 import EditNote from "@/components/EditNote.vue";
 import {mapState} from "vuex";
+import ModalView from "@/components/ModalView.vue";
 
 
 export default {
     components: {
+        ModalView,
         EditNote,
         CreateNote,
+    },
+    data() {
+        return {
+            showModal: false
+        }
     },
     computed: {
         ...mapState(['notes']),
@@ -42,14 +50,8 @@ export default {
             this.$store.commit('addNote', note);
         },
         deleteNote(noteId) {
-            if (confirm("Вы уверены, что хотите удалить заметку?")) {
-                console.log("Заметка удалена:", noteId);
-                this.$store.commit('deleteNote', noteId);
-            }
+            this.$store.commit('deleteNote', noteId);
         },
-        showEditNote() {
-            this.showCreateNote = !this.showCreateNote
-        }
     },
 };
 </script>

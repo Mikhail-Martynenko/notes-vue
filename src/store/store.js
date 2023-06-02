@@ -33,7 +33,7 @@ const store = createStore({
         },
         deleteNote(state, noteId) {
             state.notes = state.notes.filter((note) => note.id !== noteId);
-        }
+        },
     },
 });
 

@@ -16,20 +16,35 @@
             </ul>
             <button type="button" @click="addTodo">Добавить задачу</button>
             <button type="submit">Сохранить изменения</button>
-            <button type="button" @click="cancelEdit">Отменить редактирование</button>
+            <button type="button" @click="showCancelModal = true">Отменить редактирование</button>
 
+            <ModalView v-if="showCancelModal">
+                <h3>Вы уверены, отменить редактирование</h3>
+                <button type="button" @click="cancelEdit()">Да</button>
+                <button type="button" @click="showCancelModal = false">Нет</button>
+            </ModalView>
 
             <button type="button" @click="undoEdit" :disabled="undoStack.length === 0">Отменить изменение</button>
             <button type="button" @click="redoEdit" :disabled="redoStack.length === 0">Повторить изменение</button>
+
+            <button type="button" @click="showDeleteModal=true">Удалить заметку</button>
+            <ModalView v-if="showDeleteModal">
+                <h3>Вы уверены, что хотите удалить заметку?</h3>
+                <button type="button" @click="handleDeleteNote(note.id)">Удалить</button>
+                <button type="button" @click="showDeleteModal = false">Отмена</button>
+            </ModalView>
         </form>
     </div>
 </template>
 
 <script>
-import {mapGetters, mapMutations, mapState} from "vuex";
+import {mapMutations, mapState} from "vuex";
+import ModalView from "@/components/ModalView.vue";
 
 export default {
-    // props: ['noteProp'],
+    components: {
+        ModalView,
+    },
     data() {
         return {
             note: {
@@ -40,6 +55,8 @@ export default {
             originalNote: {},
             undoStack: [], // Стек для отмены изменений
             redoStack: [], // Стек для повтора изменений
+            showDeleteModal: false,
+            showCancelModal: false,
         };
     },
     mounted() {
@@ -49,18 +66,19 @@ export default {
         this.note = this.notes[noteId - 1]
     },
     computed: {
-        ...mapState(['notes']), // Доступ к состоянию хранилища
+        ...mapState(['notes']),
+        // Доступ к состоянию хранилища
     },
     methods: {
-        ...mapMutations(['updateNote']),
+        ...mapMutations(['updateNote', 'deleteNote']),
         addTodo() {
             this.note.todos.push({id: this.generateUUID(), text: '', completed: false});
 
-            // this.pushToUndoStack();
+            // this.pushToUndoStack(); // Добавление изменения в стек отмены
         },
         removeTodo(index) {
             this.note.todos.splice(index, 1);
-            // this.pushToUndoStack();
+            // this.pushToUndoStack(); // Добавление изменения в стек отмены
         },
         saveNote() {
             console.log(this.note, 'this note');
@@ -71,19 +89,21 @@ export default {
             this.updateNote(this.originalNote)
             this.$router.push('/');
         },
+        handleDeleteNote(noteId) {
+            this.$store.commit('deleteNote', noteId);
+            this.$router.push('/');
+        },
         generateUUID() {
             return `uuid-${Date.now()}`;
         },
-
         // undoEdit() {
-        //     console.log(this.note, 'prev')
-        //     const previousState = this.undoStack.pop();
-        //     if (previousState) {
+        //     if (this.undoStack.length > 0) {
+        //         const previousState = this.undoStack.pop();
         //         this.redoStack.push(JSON.parse(JSON.stringify(this.note))); // Добавление текущего состояния в стек повтора
         //         this.note = previousState;
         //     }
-        //     console.log(this.note, 'next')
         // },
+        //
         // redoEdit() {
         //     const nextState = this.redoStack.pop();
         //     if (nextState) {
@@ -91,6 +111,7 @@ export default {
         //         this.note = nextState;
         //     }
         // },
+        //
         // pushToUndoStack() {
         //     this.undoStack.push(JSON.parse(JSON.stringify(this.note))); // Добавление текущего состояния в стек отмены
         //     this.redoStack = []; // Очистка стека повтора при внесении нового изменения
