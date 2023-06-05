@@ -18,8 +18,8 @@
             <button type="submit">Сохранить изменения</button>
             <button type="button" @click="showCancelModal = true">Отменить редактирование</button>
 
-            <button type="button" @click="undoEdit" :disabled="undoStack.length === 0">Отменить изменение</button>
-            <button type="button" @click="redoEdit" :disabled="redoStack.length === 0">Повторить отмененное изменение</button>
+            <button type="button" @click="undoEdit" :disabled="undoStack.length === 0">Назад</button>
+            <button type="button" @click="redoEdit" :disabled="redoStack.length === 0">Вперед</button>
 
             <button type="button" @click="showDeleteModal=true">Удалить заметку</button>
 
@@ -71,21 +71,22 @@ export default {
         ...mapActions(['updateNote', 'deleteNote']),
 
         addTodo() {
-            const todo = { id: this.generateUUID(), text: "", completed: false };
+            const todo = {id: this.generateUUID(), text: "", completed: false};
             this.note.todos.push(todo);
-            // this.pushToUndoStack(() => {
-            //     this.note.todos.splice(this.note.todos.indexOf(todo), 1);
-            // });
+            this.pushToUndoStack(() => {
+                this.note.todos.pop();
+            });
         },
         removeTodo(index) {
             const removedTodo = this.note.todos[index];
             this.note.todos.splice(index, 1);
-            // this.pushToUndoStack(() => {
-            //     this.note.todos.splice(index, 0, removedTodo);
-            // });
+            this.pushToUndoStack(() => {
+                this.note.todos.splice(index, 0, removedTodo);
+            }, () => {
+                this.note.todos.splice(index, 1);
+            });
         },
         saveNote() {
-            console.log(this.note, 'this note');
             this.updateNote(this.note)
             this.$router.push('/');
         },
@@ -100,27 +101,28 @@ export default {
         generateUUID() {
             return `uuid-${Date.now()}`;
         },
-    //     undoEdit() {
-    //         const undoAction = this.undoStack.pop();
-    //         if (undoAction) {
-    //             undoAction();
-    //             this.redoStack.push(undoAction);
-    //         }
-    //     },
-    //     redoEdit() {
-    //         const redoAction = this.redoStack.pop();
-    //         if (redoAction) {
-    //             redoAction();
-    //             this.undoStack.push(redoAction);
-    //         }
-    //     },
-    //     pushToUndoStack(action) {
-    //         this.undoStack.push(action);
-    //         this.redoStack = [];
-    //     },
-     },
+        undoEdit() {
+            const undoAction = this.undoStack.pop();
+            if (!undoAction) return;
+            const clonedNote = deepClone(this.note);
+            undoAction();
+            this.redoStack.push(() => this.note = deepClone(clonedNote));
+        },
+        redoEdit() {
+            const redoAction = this.redoStack.pop();
+            if (!redoAction) return;
+            const clonedNote = deepClone(this.note);
+            redoAction();
+            this.undoStack.push(() => this.note = deepClone(clonedNote));
+        },
+        pushToUndoStack(action) {
+            this.undoStack.push(action);
+            this.redoStack = [];
+        },
+    },
 };
 </script>
+
 <style>
 button {
     margin: 5px;
@@ -129,6 +131,7 @@ button {
     border-radius: 10px;
     padding: 5px;
 }
+
 button[disabled] {
     background-color: gray;
 }
