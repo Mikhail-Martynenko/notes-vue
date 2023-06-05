@@ -7,13 +7,13 @@
                 <router-link :to="'/edit/' + note.id">{{ note.title }}</router-link>
                 <ul>
                     <li v-for="todo in note.todos" :key="todo.id">
-                        <input type="checkbox" disabled />
+                        <input type="checkbox" disabled :checked="todo.completed" />
                         <label>{{ todo.text }}</label>
                     </li>
                 </ul>
                 <br>
-                <button @click="showModal=true">Удалить</button>
-                <ModalView v-if="showModal">
+                <button @click="showModal = true">Удалить</button>
+                <ModalView v-show="showModal">
                     <h3>Вы уверены, что хотите удалить заметку?</h3>
                     <button type="button" @click="deleteNote(note.id)">Удалить</button>
                     <button type="button" @click="showModal = false">Отмена</button>
@@ -26,7 +26,7 @@
 <script>
 import CreateNote from "@/components/CreateNote.vue";
 import EditNote from "@/components/EditNote.vue";
-import {mapGetters, mapState} from "vuex";
+import {mapGetters} from "vuex";
 import ModalView from "@/components/ModalView.vue";
 
 
@@ -48,6 +48,7 @@ export default {
         },
         deleteNote(noteId) {
             this.$store.dispatch('deleteNote', noteId);
+            this.showModal = false;
         },
     },
 };

@@ -27,7 +27,7 @@
     flex-direction: column;
     border: 1px salmon solid;
     gap: 10px;
-    background-color: hsla(160, 100%, 47%, 0.4);
+    background-color: hsla(160, 100%, 47%, 0.1);
     padding: 20px;
     color: hsla(160, 100%, 37%, 1);
 }

@@ -19,7 +19,7 @@
             <button type="button" @click="showCancelModal = true">Отменить редактирование</button>
 
             <button type="button" @click="undoEdit" :disabled="undoStack.length === 0">Отменить изменение</button>
-            <button type="button" @click="redoEdit" :disabled="redoStack.length === 0">Повторить изменение</button>
+            <button type="button" @click="redoEdit" :disabled="redoStack.length === 0">Повторить отмененное изменение</button>
 
             <button type="button" @click="showDeleteModal=true">Удалить заметку</button>
 
@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import {mapActions, mapGetters, mapMutations, mapState} from "vuex";
+import {mapActions, mapGetters} from "vuex";
 import ModalView from "@/components/ModalView.vue";
 import {deepClone} from "@/utils/deepClone";
 
@@ -62,7 +62,6 @@ export default {
         };
     },
     mounted() {
-        // this.note = JSON.parse(JSON.stringify(this.noteProp));
         const noteId = this.$route.params.id;
         this.originalNote = deepClone(this.allNotes()[noteId - 1]);
         this.note = this.allNotes()[noteId - 1]
@@ -71,16 +70,19 @@ export default {
         ...mapGetters(['allNotes']),
         ...mapActions(['updateNote', 'deleteNote']),
 
-        // TODO FIX ID
-
         addTodo() {
-            this.note.todos.push({id: this.generateUUID(), text: '', completed: false});
-
-            // this.pushToUndoStack(); // Добавление изменения в стек отмены
+            const todo = { id: this.generateUUID(), text: "", completed: false };
+            this.note.todos.push(todo);
+            // this.pushToUndoStack(() => {
+            //     this.note.todos.splice(this.note.todos.indexOf(todo), 1);
+            // });
         },
         removeTodo(index) {
+            const removedTodo = this.note.todos[index];
             this.note.todos.splice(index, 1);
-            // this.pushToUndoStack(); // Добавление изменения в стек отмены
+            // this.pushToUndoStack(() => {
+            //     this.note.todos.splice(index, 0, removedTodo);
+            // });
         },
         saveNote() {
             console.log(this.note, 'this note');
@@ -98,26 +100,36 @@ export default {
         generateUUID() {
             return `uuid-${Date.now()}`;
         },
-        // undoEdit() {
-        //     if (this.undoStack.length > 0) {
-        //         const previousState = this.undoStack.pop();
-        //         this.redoStack.push(JSON.parse(JSON.stringify(this.note))); // Добавление текущего состояния в стек повтора
-        //         this.note = previousState;
-        //     }
-        // },
-        //
-        // redoEdit() {
-        //     const nextState = this.redoStack.pop();
-        //     if (nextState) {
-        //         this.undoStack.push(JSON.parse(JSON.stringify(this.note))); // Добавление текущего состояния в стек отмены
-        //         this.note = nextState;
-        //     }
-        // },
-        //
-        // pushToUndoStack() {
-        //     this.undoStack.push(JSON.parse(JSON.stringify(this.note))); // Добавление текущего состояния в стек отмены
-        //     this.redoStack = []; // Очистка стека повтора при внесении нового изменения
-        // },
-    },
+    //     undoEdit() {
+    //         const undoAction = this.undoStack.pop();
+    //         if (undoAction) {
+    //             undoAction();
+    //             this.redoStack.push(undoAction);
+    //         }
+    //     },
+    //     redoEdit() {
+    //         const redoAction = this.redoStack.pop();
+    //         if (redoAction) {
+    //             redoAction();
+    //             this.undoStack.push(redoAction);
+    //         }
+    //     },
+    //     pushToUndoStack(action) {
+    //         this.undoStack.push(action);
+    //         this.redoStack = [];
+    //     },
+     },
 };
 </script>
+<style>
+button {
+    margin: 5px;
+    background-color: hsla(160, 100%, 37%, 1);
+    color: black;
+    border-radius: 10px;
+    padding: 5px;
+}
+button[disabled] {
+    background-color: gray;
+}
+</style>

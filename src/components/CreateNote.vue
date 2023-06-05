@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="createNote">
         <h2>Создание заметки</h2>
         <form @submit.prevent="saveNote">
             <label for="title">Название:</label>
@@ -25,7 +25,7 @@ export default {
     data() {
         return {
             note: {
-                id: this.allNotes.length ,
+                id: this.allNotes().length + 1,
                 title: '',
                 todos: [],
             },
@@ -41,10 +41,10 @@ export default {
             this.note.todos.splice(index, 1);
         },
         saveNote() {
-            console.log(this.note);
+            console.log(this.allNotes().length)
             this.$emit('note-saved', this.note);
             this.note = {
-                id: this.allNotes.length + 1,
+                id: this.allNotes().length + 1,
                 title: '',
                 todos: [],
             };
@@ -55,3 +55,24 @@ export default {
     },
 };
 </script>
+
+<style>
+.createNote {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+ul {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: center;
+}
+</style>
