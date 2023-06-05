@@ -31,9 +31,4 @@
     padding: 20px;
     color: hsla(160, 100%, 37%, 1);
 }
-
-.modal-buttons {
-    text-align: right;
-    margin-top: 10px;
-}
 </style>

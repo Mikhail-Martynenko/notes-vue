@@ -3,7 +3,7 @@
         <CreateNote @note-saved="addNote" />
         <h1>Список заметок</h1>
         <ul>
-            <li v-for="note in notes" :key="note.id">
+            <li v-for="note in this.allNotes()" :key="note.id">
                 <router-link :to="'/edit/' + note.id">{{ note.title }}</router-link>
                 <ul>
                     <li v-for="todo in note.todos" :key="todo.id">
@@ -24,10 +24,9 @@
 </template>
 
 <script>
-
 import CreateNote from "@/components/CreateNote.vue";
 import EditNote from "@/components/EditNote.vue";
-import {mapState} from "vuex";
+import {mapGetters, mapState} from "vuex";
 import ModalView from "@/components/ModalView.vue";
 
 
@@ -42,19 +41,18 @@ export default {
             showModal: false
         }
     },
-    computed: {
-        ...mapState(['notes']),
-    },
     methods: {
+        ...mapGetters(['allNotes']),
         addNote(note) {
-            this.$store.commit('addNote', note);
+            this.$store.dispatch('addNote', note);
         },
         deleteNote(noteId) {
-            this.$store.commit('deleteNote', noteId);
+            this.$store.dispatch('deleteNote', noteId);
         },
     },
 };
 </script>
+
 <style>
 .list {
     display: flex;

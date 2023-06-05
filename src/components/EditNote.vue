@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import {mapActions, mapMutations, mapState} from "vuex";
+import {mapActions, mapGetters, mapMutations, mapState} from "vuex";
 import ModalView from "@/components/ModalView.vue";
 import {deepClone} from "@/utils/deepClone";
 
@@ -64,15 +64,12 @@ export default {
     mounted() {
         // this.note = JSON.parse(JSON.stringify(this.noteProp));
         const noteId = this.$route.params.id;
-        this.originalNote = deepClone(this.notes[noteId - 1]);
-        this.note = this.notes[noteId - 1]
-    },
-    computed: {
-        ...mapState(['notes']),// TODO mapGetters
-        // Доступ к состоянию хранилища
+        this.originalNote = deepClone(this.allNotes()[noteId - 1]);
+        this.note = this.allNotes()[noteId - 1]
     },
     methods: {
-        ...mapActions(['updateNote', 'deleteNote']),// TODO mapActions
+        ...mapGetters(['allNotes']),
+        ...mapActions(['updateNote', 'deleteNote']),
 
         // TODO FIX ID
 
@@ -95,7 +92,7 @@ export default {
             this.$router.push('/');
         },
         handleDeleteNote(noteId) {
-            this.$store.commit('deleteNote', noteId);
+            this.$store.dispatch('deleteNote', noteId);
             this.$router.push('/');
         },
         generateUUID() {

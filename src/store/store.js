@@ -22,16 +22,16 @@ const store = createStore({
         }
     },
     actions: {
-        addNote(state, note) {
+        addNote({state}, note) {
             state.notes.push(note);
         },
-        updateNote(state, updatedNote) {
+        updateNote({state}, updatedNote) {
             const index = state.notes.findIndex((note) => note.id === updatedNote.id);
             if (index !== -1) {
                 state.notes.splice(index, 1, updatedNote);
             }
         },
-        deleteNote(state, noteId) {
+        deleteNote({state}, noteId) {
             state.notes = state.notes.filter((note) => note.id !== noteId);
         },
     },
