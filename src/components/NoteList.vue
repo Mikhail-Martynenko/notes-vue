@@ -1,24 +1,9 @@
 <template>
     <div class="list">
-        <CreateNote @note-saved="addNote" />
+        <CreateNote />
         <h1>Список заметок</h1>
         <ul>
-            <li v-for="note in this.allNotes()" :key="note.id">
-                <router-link :to="'/edit/' + note.id">{{ note.title }}</router-link>
-                <ul>
-                    <li v-for="todo in note.todos" :key="todo.id">
-                        <input type="checkbox" disabled :checked="todo.completed" />
-                        <label>{{ todo.text }}</label>
-                    </li>
-                </ul>
-                <br>
-                <button @click="showModal = true">Удалить</button>
-                <ModalView v-show="showModal">
-                    <h3>Вы уверены, что хотите удалить заметку?</h3>
-                    <button type="button" @click="deleteNote(note.id)">Удалить</button>
-                    <button type="button" @click="showModal = false">Отмена</button>
-                </ModalView>
-            </li>
+            <NoteItem v-for="note in this.allNotes()" :key="note.id" :note="note" />
         </ul>
     </div>
 </template>
@@ -28,28 +13,18 @@ import CreateNote from "@/components/CreateNote.vue";
 import EditNote from "@/components/EditNote.vue";
 import {mapGetters} from "vuex";
 import ModalView from "@/components/ModalView.vue";
+import NoteItem from "@/components/NoteItem.vue";
 
 
 export default {
     components: {
+        NoteItem,
         ModalView,
         EditNote,
         CreateNote,
     },
-    data() {
-        return {
-            showModal: false
-        }
-    },
     methods: {
         ...mapGetters(['allNotes']),
-        addNote(note) {
-            this.$store.dispatch('addNote', note);
-        },
-        deleteNote(noteId) {
-            this.$store.dispatch('deleteNote', noteId);
-            this.showModal = false;
-        },
     },
 };
 </script>

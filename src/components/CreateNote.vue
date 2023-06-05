@@ -42,7 +42,7 @@ export default {
         },
         saveNote() {
             console.log(this.allNotes().length)
-            this.$emit('note-saved', this.note);
+            this.$store.dispatch('addNote', this.note);
             this.note = {
                 id: this.allNotes().length + 1,
                 title: '',

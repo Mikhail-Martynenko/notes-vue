@@ -4,9 +4,7 @@
         <form @submit.prevent="saveNote">
             <label for="title">Название:</label>
             <input type="text" id="title" v-model="note.title" required />
-            <br>
             <label for="todo">Задачи:</label>
-            <br>
             <ul>
                 <li v-for="(todo, index) in note.todos" :key="todo.id">
                     <input type="checkbox" v-model="todo.completed" />
@@ -15,7 +13,7 @@
                 </li>
             </ul>
             <button type="button" @click="addTodo">Добавить задачу</button>
-            <button type="submit">Сохранить изменения</button>
+            <button type="submit">Сохранить заметку</button>
             <button type="button" @click="showCancelModal = true">Отменить редактирование</button>
 
             <button type="button" @click="undoEdit" :disabled="undoStack.length === 0">Назад</button>
@@ -42,9 +40,11 @@
 import {mapActions, mapGetters} from "vuex";
 import ModalView from "@/components/ModalView.vue";
 import {deepClone} from "@/utils/deepClone";
+import TodoItem from "@/components/TodoItem.vue";
 
 export default {
     components: {
+        TodoItem,
         ModalView,
     },
     data() {
