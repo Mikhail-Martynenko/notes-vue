@@ -14,8 +14,6 @@ const props = defineProps({
 });
 
 const todo = ref(props.todo);
-
-
 const emit = defineEmits(['remove']);
 
 const remove = () => {

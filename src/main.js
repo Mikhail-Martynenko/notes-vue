@@ -8,7 +8,6 @@ import CreateNote from "@/components/CreateNote.vue";
 import EditNote from "@/components/EditNote.vue";
 import store from "@/store/store";
 
-
 const routes = [
     {path: '/', name: 'note-list', component: NoteList},
     {path: '/create', name: 'note', component: CreateNote},

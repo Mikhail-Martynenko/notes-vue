@@ -15,7 +15,6 @@ import {mapGetters} from "vuex";
 import ModalView from "@/components/ModalView.vue";
 import NoteItem from "@/components/NoteItem.vue";
 
-
 export default {
     components: {
         NoteItem,

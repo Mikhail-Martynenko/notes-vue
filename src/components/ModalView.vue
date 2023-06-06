@@ -6,9 +6,6 @@
     </div>
 </template>
 
-<script>
-</script>
-
 <style>
 .modal {
     position: fixed;

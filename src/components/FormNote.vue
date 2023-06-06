@@ -9,7 +9,6 @@
 </template>
 
 <script>
-
 import TodoItem from "@/components/FormNote/TodoItem.vue";
 import InputNote from "@/components/FormNote/InputNote.vue";
 import TodoList from "@/components/FormNote/TodoList.vue";
