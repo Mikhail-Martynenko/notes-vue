@@ -37,6 +37,7 @@ export default {
     methods: {
         deleteNote(noteId) {
             this.$store.dispatch('deleteNote', noteId);
+            this.$store.dispatch('reassignIds')
             this.showModal = false;
         },
     },

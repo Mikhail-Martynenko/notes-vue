@@ -41,5 +41,11 @@ export default createStore({
             state.notes = state.notes.filter((note) => note.id !== noteId);
             sessionStorage.setItem('notes', JSON.stringify(state));
         },
+        reassignIds({ state }) {
+            state.notes.forEach((note, index) => {
+                note.id = index + 1;
+            });
+            sessionStorage.setItem('notes', JSON.stringify(state));
+        },
     },
 });
