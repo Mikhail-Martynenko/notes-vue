@@ -9,25 +9,23 @@
             </ul>
             <button type="button" @click="addTodo">Добавить задачу</button>
             <button type="submit">Сохранить заметку</button>
-            <button type="button" @click="showCancelModal = true">Отменить редактирование</button>
-
-            <button type="button" @click="undoEdit" :disabled="undoStack.length === 0">Назад</button>
-            <button type="button" @click="redoEdit" :disabled="redoStack.length === 0">Вперед</button>
-
-            <button type="button" @click="showDeleteModal=true">Удалить заметку</button>
-
-            <ModalView v-if="showCancelModal">
-                <h3>Вы уверены, отменить редактирование</h3>
-                <button type="button" @click="cancelEdit()">Да</button>
-                <button type="button" @click="showCancelModal = false">Нет</button>
-            </ModalView>
-
-            <ModalView v-if="showDeleteModal">
-                <h3>Вы уверены, что хотите удалить заметку?</h3>
-                <button type="button" @click="handleDeleteNote(note.id)">Удалить</button>
-                <button type="button" @click="showDeleteModal = false">Отмена</button>
-            </ModalView>
         </form>
+        <button type="button" @click="showCancelModal = true">Отменить редактирование</button>
+        <button type="button" @click="undoEdit" :disabled="undoStack.length === 0">Назад</button>
+        <button type="button" @click="redoEdit" :disabled="redoStack.length === 0">Вперед</button>
+        <button type="button" @click="showDeleteModal=true">Удалить заметку</button>
+
+        <ModalView v-if="showCancelModal">
+            <h3>Вы уверены, отменить редактирование</h3>
+            <button type="button" @click="cancelEdit()">Да</button>
+            <button type="button" @click="showCancelModal = false">Нет</button>
+        </ModalView>
+
+        <ModalView v-if="showDeleteModal">
+            <h3>Вы уверены, что хотите удалить заметку?</h3>
+            <button type="button" @click="handleDeleteNote(note.id)">Удалить</button>
+            <button type="button" @click="showDeleteModal = false">Отмена</button>
+        </ModalView>
     </div>
 </template>
 
@@ -37,9 +35,11 @@ import ModalView from "@/components/ModalView.vue";
 import {deepClone} from "@/utils/deepClone";
 import InputNote from "@/components/FormNote/InputNote.vue";
 import TodoItem from "@/components/FormNote/TodoItem.vue";
+import FormNote from "@/components/FormNote.vue";
 
 export default {
     components: {
+        FormNote,
         TodoItem,
         InputNote,
         ModalView,
@@ -93,6 +93,7 @@ export default {
         },
         handleDeleteNote(noteId) {
             this.$store.dispatch('deleteNote', noteId);
+            this.$store.dispatch('reassignIds')
             this.$router.push('/');
         },
         generateUUID() {
