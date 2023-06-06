@@ -3,7 +3,7 @@
         <router-link :to="'/edit/' + note.id">{{ note.title }}</router-link>
         <ul>
             <li v-for="todo in note.todos" :key="todo.id">
-                <input type="checkbox" disabled :checked="todo.completed" />
+                <input type="checkbox" :checked="todo.completed" disabled/>
                 <label>{{ todo.text }}</label>
             </li>
         </ul>

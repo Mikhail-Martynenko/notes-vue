@@ -4,9 +4,7 @@
         <form @submit.prevent="saveNote">
             <InputNote v-model="note.title" />
             <label for="todo">Задачи:</label>
-            <ul>
-                <TodoItem v-for="(todo, index) in note.todos" :key="todo.id" :todo="todo" @remove="removeTodo(index)" />
-            </ul>
+            <TodoList :todos="note.todos" />
             <button type="button" @click="addTodo">Добавить задачу</button>
             <button type="submit">Сохранить заметку</button>
         </form>
@@ -36,9 +34,11 @@ import {deepClone} from "@/utils/deepClone";
 import InputNote from "@/components/FormNote/InputNote.vue";
 import TodoItem from "@/components/FormNote/TodoItem.vue";
 import FormNote from "@/components/FormNote.vue";
+import TodoList from "@/components/FormNote/TodoList.vue";
 
 export default {
     components: {
+        TodoList,
         FormNote,
         TodoItem,
         InputNote,
