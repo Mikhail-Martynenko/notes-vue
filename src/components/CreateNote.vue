@@ -2,15 +2,10 @@
     <div class="createNote">
         <h2>Создание заметки</h2>
         <form @submit.prevent="saveNote">
-            <label for="title">Название:</label>
-            <input type="text" id="title" v-model="note.title" required />
+            <InputNote v-model="note.title" />
             <label for="todo">Задачи:</label>
             <ul>
-                <li v-for="(todo, index) in note.todos" :key="todo.id">
-                    <input type="checkbox" v-model="todo.completed" />
-                    <input type="text" v-model="todo.text" required />
-                    <button type="button" @click="removeTodo(index)">Удалить</button>
-                </li>
+                <TodoItem v-for="(todo, index) in note.todos" :key="todo.id" :todo="todo" @remove="removeTodo(index)" />
             </ul>
             <button type="button" @click="addTodo">Добавить задачу</button>
             <button type="submit">Сохранить заметку</button>
@@ -20,8 +15,11 @@
 
 <script>
 import {mapGetters} from "vuex";
+import InputNote from "@/components/FormNote/InputNote.vue";
+import TodoItem from "@/components/FormNote/TodoItem.vue";
 
 export default {
+    components: {TodoItem, InputNote},
     data() {
         return {
             note: {

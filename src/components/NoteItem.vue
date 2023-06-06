@@ -2,10 +2,10 @@
     <li :key="note.id">
         <router-link :to="'/edit/' + note.id">{{ note.title }}</router-link>
         <ul>
-            <TodoItem v-for="todo in note.todos" :key="todo.id" :todo="todo">
+            <li v-for="todo in note.todos" :key="todo.id">
                 <input type="checkbox" disabled :checked="todo.completed" />
                 <label>{{ todo.text }}</label>
-            </TodoItem>
+            </li>
         </ul>
         <button @click="showModal = true">Удалить</button>
         <ModalView v-show="showModal">
@@ -18,11 +18,9 @@
 
 <script>
 import ModalView from "@/components/ModalView.vue";
-import TodoItem from "@/components/TodoItem.vue";
 
 export default {
     components: {
-        TodoItem,
         ModalView,
     },
     props: {
